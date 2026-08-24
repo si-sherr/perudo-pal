@@ -1,0 +1,13 @@
+#!/bin/bash
+set -euo pipefail
+
+SCRIPT_DIR=$(dirname "$0")
+
+# Ensure we are in root directory
+cd "$SCRIPT_DIR/.."
+
+# Configure CMake
+cmake -B build
+
+# Build
+cmake --build build
