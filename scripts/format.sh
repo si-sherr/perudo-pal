@@ -7,4 +7,4 @@ SCRIPT_DIR=$(dirname "$0")
 cd "$SCRIPT_DIR/.."
 
 # Find all source files and format
-find src/ -iname '*.h' -o -iname '*.c' | xargs clang-format -i --verbose
+find src/ tests/ -iname '*.h' -o -iname '*.c' -o -iname '*.cpp' | xargs clang-format -i --verbose
