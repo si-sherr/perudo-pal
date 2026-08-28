@@ -7,17 +7,8 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
+include(GoogleTest)
+
 enable_testing()
 
-add_executable(
-  ppal-tests
-  hello_test.cpp
-)
-
-target_link_libraries(
-  ppal-tests
-  GTest::gtest_main
-)
-
-include(GoogleTest)
-gtest_discover_tests(ppal-tests)
+add_subdirectory(test_probability)
