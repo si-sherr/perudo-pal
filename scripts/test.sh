@@ -7,4 +7,4 @@ SCRIPT_DIR=$(dirname "$0")
 cd "$SCRIPT_DIR/.."
 
 # Assumes CMake already configured, and tests are built
-ctest --test-dir build/tests
+ctest --output-on-failure --test-dir build/tests
