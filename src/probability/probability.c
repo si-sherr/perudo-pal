@@ -11,18 +11,46 @@
 #include "probability.h"
 
 /***************************************************************
+ * Includes
+ **************************************************************/
+#include <math.h>
+
+/***************************************************************
  * Public Function Definitions
  **************************************************************/
 float
 binomial_probability (float p, int k, int n)
 {
-  return 0.0f;
+  float prob = 0.0f;
+
+  if (k <= n)
+    {
+      int choose_term = choose (n, k);
+
+      prob = choose_term * powf (p, (float)k)
+             * powf ((1.0f - p), (float)(n - k));
+    }
+
+  return prob;
 }
 
 float
 cumulative_binomial_probability (float p, int k, int n)
 {
-  return 0.0f;
+  float prob = 0.0f;
+
+  // P(X <= k)
+  if (k <= n)
+    {
+      // This for loop iterates over k values 0 -> k, so case is handled where
+      // p = 0 and k = 0, which should give 1
+      for (int i = 0; i <= k; i++)
+        {
+          prob += binomial_probability (p, i, n);
+        }
+    }
+
+  return prob;
 }
 
 int

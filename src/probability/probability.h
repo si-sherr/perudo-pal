@@ -34,7 +34,7 @@ float binomial_probability (float p, int k, int n);
  * @param p Probability of success for each trial
  * @param k Number of successes
  * @param n Number of trials
- * @return float Probability of `k` or fewer successes
+ * @return float Cumulative probability of `k` or fewer successes
  */
 float cumulative_binomial_probability (float p, int k, int n);
 
