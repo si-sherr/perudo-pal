@@ -28,7 +28,7 @@ extern "C"
 float binomial_probability (float p, int k, int n);
 
 /**
- * @brief Comput the cumulative binomial probability, P(X<=k), of the provided
+ * @brief Compute the cumulative binomial probability, P(X<=k), of the provided
  * parameters
  *
  * @param p Probability of success for each trial
