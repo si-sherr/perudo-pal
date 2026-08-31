@@ -19,13 +19,13 @@
  * Public Function Definitions
  **************************************************************/
 float
-binomial_probability (float p, int k, int n)
+binomial_probability (float p, unsigned int k, unsigned int n)
 {
   float prob = 0.0f;
 
   if (k <= n)
     {
-      int choose_term = choose (n, k);
+      unsigned int choose_term = choose (n, k);
 
       prob = choose_term * powf (p, (float)k)
              * powf ((1.0f - p), (float)(n - k));
@@ -35,7 +35,7 @@ binomial_probability (float p, int k, int n)
 }
 
 float
-cumulative_binomial_probability (float p, int k, int n)
+cumulative_binomial_probability (float p, unsigned int k, unsigned int n)
 {
   float prob = 0.0f;
 
@@ -53,8 +53,8 @@ cumulative_binomial_probability (float p, int k, int n)
   return prob;
 }
 
-int
-choose (int n, int k)
+unsigned int
+choose (unsigned int n, unsigned int k)
 {
   int retval = 0;
 

@@ -2,10 +2,10 @@
 #include <math.h>
 #include <probability.h>
 
-#define FLOAT_COMP_DP 4
+#define FLOAT_COMP_DP 4U
 
 float
-round_to_dp (float input, int num_dp)
+round_to_dp (float input, unsigned int num_dp)
 {
   float sf = powf (10.0f, (float)num_dp);
   input *= sf;

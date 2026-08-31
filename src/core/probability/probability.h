@@ -25,7 +25,7 @@ extern "C"
  * @param n Number of trials
  * @return float Probability of `k` successes
  */
-float binomial_probability (float p, int k, int n);
+float binomial_probability (float p, unsigned int k, unsigned int n);
 
 /**
  * @brief Compute the cumulative binomial probability, P(X<=k), of the provided
@@ -36,16 +36,17 @@ float binomial_probability (float p, int k, int n);
  * @param n Number of trials
  * @return float Cumulative probability of `k` or fewer successes
  */
-float cumulative_binomial_probability (float p, int k, int n);
+float cumulative_binomial_probability (float p, unsigned int k,
+                                       unsigned int n);
 
 /**
  * @brief Compute n choose k
  *
  * @param n Total number of elements
  * @param k Number of elements to choose
- * @return int Number of combinations
+ * @return unsigned int Number of combinations
  */
-int choose (int n, int k);
+unsigned int choose (unsigned int n, unsigned int k);
 
 #ifdef __cplusplus
 }
