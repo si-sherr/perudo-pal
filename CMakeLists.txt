@@ -8,4 +8,5 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS on)
 
 add_subdirectory(src/core)
 add_subdirectory(src)
+add_subdirectory(external)
 add_subdirectory(tests)

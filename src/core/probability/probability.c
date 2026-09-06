@@ -1,6 +1,6 @@
 /**
  * @file probability.c
- * @author Simon Sherriff
+ * @author Simon Sherriff (simon.sherriff.uk@gmail.com)
  * @brief Implementation file for general probability functions
  *
  */
@@ -18,26 +18,26 @@
 /***************************************************************
  * Public Function Definitions
  **************************************************************/
-float
-binomial_probability (float p, unsigned int k, unsigned int n)
+double
+binomial_probability (double p, unsigned int k, unsigned int n)
 {
-  float prob = 0.0f;
+  double prob = 0.0f;
 
   if (k <= n)
     {
       unsigned int choose_term = choose (n, k);
 
-      prob = choose_term * powf (p, (float)k)
-             * powf ((1.0f - p), (float)(n - k));
+      prob = choose_term * pow (p, (double)k)
+             * pow ((1.0 - p), (double)(n - k));
     }
 
   return prob;
 }
 
-float
-cumulative_binomial_probability (float p, unsigned int k, unsigned int n)
+double
+cumulative_binomial_probability (double p, unsigned int k, unsigned int n)
 {
-  float prob = 0.0f;
+  double prob = 0.0;
 
   // P(X <= k)
   if (k <= n)

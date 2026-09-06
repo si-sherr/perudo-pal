@@ -23,9 +23,9 @@ extern "C"
  * @param p Probability of success for each trial
  * @param k Number of successes
  * @param n Number of trials
- * @return float Probability of `k` successes
+ * @return double Probability of `k` successes
  */
-float binomial_probability (float p, unsigned int k, unsigned int n);
+double binomial_probability (double p, unsigned int k, unsigned int n);
 
 /**
  * @brief Compute the cumulative binomial probability, P(X<=k), of the provided
@@ -34,10 +34,10 @@ float binomial_probability (float p, unsigned int k, unsigned int n);
  * @param p Probability of success for each trial
  * @param k Number of successes
  * @param n Number of trials
- * @return float Cumulative probability of `k` or fewer successes
+ * @return double Cumulative probability of `k` or fewer successes
  */
-float cumulative_binomial_probability (float p, unsigned int k,
-                                       unsigned int n);
+double cumulative_binomial_probability (double p, unsigned int k,
+                                        unsigned int n);
 
 /**
  * @brief Compute n choose k
