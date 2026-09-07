@@ -7,6 +7,8 @@
  *
  */
 
+// TODO: define short opt strings to avoid duplication
+
 /***************************************************************
  * Includes
  **************************************************************/
@@ -30,10 +32,10 @@
 static bool version_flag = false;
 static bool help_flag = false;
 static bool palefico_flag = false;
-static unsigned total_dice;
+static unsigned total_dice = 0;
 static char hand_str[HAND_STR_BUFFER_SIZE] = { '\0' };
 static char bid_str[BID_STR_BUFFER_SIZE] = { '\0' };
-static unsigned int faces;
+static unsigned int faces = 0;
 
 /***************************************************************
  * Option Definitions
@@ -103,7 +105,7 @@ main (int argc, char *argv[])
   while (1)
     {
       bool parse_failure_flag = false;
-      opt = getopt_long (argc, argv, OPTIONS_SHORT, OPTIONS_LONG, NULL);
+      opt = getopt_long (argc, argv, OPTIONS_SHORT, OPTIONS_LONG, nullptr);
 
       // End of options
       if (opt == -1)
@@ -184,6 +186,20 @@ main (int argc, char *argv[])
         }
     }
 
+  // Check required args are given
+  if (total_dice == 0)
+    {
+      on_missing_arg ('t');
+    }
+  if (hand_str[0] == '\0')
+    {
+      on_missing_arg ('d');
+    }
+  if (bid_str[0] == '\0')
+    {
+      on_missing_arg ('b');
+    }
+
   printf ("help_flag: %d\n", help_flag);
   printf ("version_flag %d\n", version_flag);
   printf ("palefico_flag %d\n", palefico_flag);
@@ -191,7 +207,4 @@ main (int argc, char *argv[])
   printf ("hand_str: %s\n", hand_str);
   printf ("bid_str: %s\n", bid_str);
   printf ("faces: %d\n", faces);
-
-  // TODO: Check all required arguments are given before dispacthing to
-  // lower-level handlers.
 }
