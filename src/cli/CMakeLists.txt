@@ -1,6 +1,6 @@
 project(perudo-pal-src)
 
-set(SOURCES main.c)
+set(SOURCES main.c parser/parser.c)
 
 add_compile_options(-Wall -Wformat=2)
 
@@ -10,4 +10,5 @@ add_dependencies(ppal version)
 
 target_link_libraries(ppal ppal-core)
 
-target_include_directories(ppal PRIVATE ${CMAKE_SOURCE_DIR}/src/version)
+target_include_directories(ppal PRIVATE ${CMAKE_CURRENT_LIST_DIR}/parser
+                                        ${CMAKE_SOURCE_DIR}/src/version)
