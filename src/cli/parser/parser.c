@@ -80,14 +80,12 @@ parse_ul_decimal (char *strptr, unsigned int *p_ul_out)
 size_t
 parse_hand_str (char *hand_str, unsigned int **hand_array_out)
 {
-  fprintf (stderr, "Failed to parse hand: %s\n", hand_str);
   return 0;
 }
 
 bool
 parse_bid_str (char *bid_str, perudo_bid_s *bid_out)
 {
-  fprintf (stderr, "Failed to parse bid: %s\n", bid_str);
   return false;
 }
 
@@ -96,23 +94,44 @@ parse_game_state (unsigned int total_dice, char *hand_str, char *bid_str,
                   bool palefico_flag, unsigned int faces,
                   perudo_game_state_s *game_state_out)
 {
-  bool success = false;
+  bool success = true;
   perudo_game_state_s parsed_game_state;
 
   // Parse easy integer/bool values first
-  parsed_game_state.n_total_dice = total_dice;
   parsed_game_state.palefico_flag = palefico_flag;
-  parsed_game_state.n_faces = faces;
 
-  if (parse_bid_str (bid_str, &(parsed_game_state.current_bid)))
+  if (faces == 0)
     {
-      parsed_game_state.hand_size
-          = parse_hand_str (hand_str, &(parsed_game_state.hand_array));
+      fprintf (stderr, "Invalid argument for '-f' option\n");
+      success = false;
+    }
+  else
+    {
+      parsed_game_state.n_faces = faces;
+    }
 
-      if (parsed_game_state.hand_size != 0)
-        {
-          success = true;
-        }
+  if (total_dice == 0)
+    {
+      fprintf (stderr, "No valid argument for required '-t' option\n");
+      success = false;
+    }
+  else
+    {
+      parsed_game_state.n_total_dice = total_dice;
+    }
+
+  if (!parse_bid_str (bid_str, &(parsed_game_state.current_bid)))
+    {
+      fprintf (stderr, "No valid argument for required '-b' option\n");
+      success = false;
+    }
+
+  parsed_game_state.hand_size
+      = parse_hand_str (hand_str, &(parsed_game_state.hand_array));
+  if (parsed_game_state.hand_size == 0)
+    {
+      fprintf (stderr, "No valid argument for required '-d' option\n");
+      success = false;
     }
 
   if (success)
