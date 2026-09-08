@@ -1,0 +1,4 @@
+#ifndef PPAL_VERSION_H_
+#define PPAL_VERSION_H_
+#define PPAL_VERSION "@PPAL_VERSION@"
+#endif /* PPAL_VERSION_H_ */
