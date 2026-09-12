@@ -5,6 +5,14 @@
  *
  */
 
+#ifndef PARSER_H
+#define PARSER_H
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 /***************************************************************
  * Includes
  **************************************************************/
@@ -26,3 +34,9 @@ typedef struct
  **************************************************************/
 
 parse_result_s parser (int argc, char *argv[]);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // PARSER_H

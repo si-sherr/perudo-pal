@@ -12,3 +12,4 @@ enable_testing()
 
 add_subdirectory(test_probability)
 add_subdirectory(test_game_engine)
+add_subdirectory(test_parser)
