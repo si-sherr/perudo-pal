@@ -19,14 +19,10 @@ typedef struct
   bool version_flag;
   bool help_flag;
   perudo_game_state_s game_state;
-} parser_data_s;
+} parse_result_s;
 
 /***************************************************************
  * Public Function Prototypes
  **************************************************************/
 
-/**
- * @brief Parse `main()` CLI args into game state
- *
- */
-parser_data_s parser (int argc, char *argv[]);
+parse_result_s parser (int argc, char *argv[]);

@@ -13,7 +13,6 @@
 /***************************************************************
  * Includes
  **************************************************************/
-#include "ppal_version.h"
 #include <errno.h>
 #include <getopt.h>
 #include <stdbool.h>
@@ -27,17 +26,20 @@
  **************************************************************/
 #define DEFAULT_PALEFICO_FLAG false
 #define DEFAULT_N_FACES 6U
-#define HAND_STR_BUFFER_SIZE 32U
-#define BID_STR_BUFFER_SIZE 8U
+
+#define MAX_TOTAL_DICE_ARG_LEN 8U
+#define MAX_HAND_ARG_LEN 32U
+#define MAX_BID_ARG_LEN 16U
+#define MAX_FACE_ARG_LEN 8U
 
 /***************************************************************
  * Variables
  **************************************************************/
-static bool palefico_flag = DEFAULT_PALEFICO_FLAG;
-static unsigned total_dice = 0;
-static char hand_str[HAND_STR_BUFFER_SIZE] = { '\0' };
-static char bid_str[BID_STR_BUFFER_SIZE] = { '\0' };
-static unsigned int faces = DEFAULT_N_FACES;
+static bool m_palefico_flag = DEFAULT_PALEFICO_FLAG;
+static char m_total_dice_arg_str[MAX_TOTAL_DICE_ARG_LEN] = { '\0' };
+static char m_hand_arg_str[MAX_HAND_ARG_LEN] = { '\0' };
+static char m_bid_arg_str[MAX_BID_ARG_LEN] = { '\0' };
+static char m_face_arg_str[MAX_FACE_ARG_LEN] = { '\0' };
 
 /***************************************************************
  * Option Definitions
@@ -57,86 +59,171 @@ static const char OPTIONS_SHORT[] = ":hvt:d:b:pf:";
 /***************************************************************
  * Private Function Definitions
  **************************************************************/
+
+/**
+ * @brief Parse an unsigned int from a string (decimal formatted)
+ *
+ * @param str Input string
+ * @param ul_out Pointer to output variable
+ * @return true String parsed successfully
+ * @return false Could not parse string
+ */
 bool
-parse_ul_decimal (char *strptr, unsigned int *p_ul_out)
+parse_ul_decimal (char *str, unsigned int *ul_out)
 {
   bool success = false;
 
-  errno = 0;
-  char *endptr;
-  unsigned int ul = strtoul (strptr, &endptr, 10);
-
-  // If **endptr is '\0' on return, the entire string is valid (assuming strptr
-  // is not '\0') not null)
-  if (*endptr == '\0')
+  if ((str != nullptr) && (*str != '\0'))
     {
-      success = true;
-      *p_ul_out = ul;
+      errno = 0;
+      char *endptr;
+
+      unsigned int ul = strtoul (str, &endptr, 10);
+
+      // If **endptr is '\0' on return, the entire string is valid (assuming
+      // str is not '\0')
+      if (*endptr == '\0')
+        {
+          *ul_out = ul;
+          success = true;
+        }
     }
 
   return success;
 }
 
-size_t
-parse_hand_str (char *hand_str, unsigned int **hand_array_out)
+/**
+ * @brief Parse a string representing the player's hand into an array of
+ * unsigned integers
+ * @details This function expects a string of the form "1,2,3,4,5,6"
+ *
+ * @param hand_str Input string to parse
+ * @param hand_array_out Pointer to output array
+ * @param hand_size_out Pointer to the size of the parsed string
+ * @return true Complete string parsed successfully
+ * @return false Could not parse complete string
+ */
+bool
+parse_hand_str (char *hand_str, unsigned int **hand_array_out,
+                size_t *hand_size_out)
 {
-  return 0;
+  bool success = false;
+  unsigned int *hand_array = malloc (0);
+  size_t hand_size = 0;
+  const char delim[] = ",";
+  char *token, *saveptr;
+  size_t num_tokens = 0;
+
+  while (1)
+    {
+      token = strtok_r (hand_str, delim, &saveptr);
+      hand_str = nullptr;
+      unsigned int parsed_int;
+      if (parse_ul_decimal (token, &parsed_int))
+        {
+          num_tokens++;
+          // Realloc to incremented hand_size and add parsed value to end
+          hand_array
+              = reallocarray (hand_array, ++hand_size, sizeof (hand_array[0]));
+          hand_array[hand_size - 1] = parsed_int;
+        }
+      else
+        {
+          break;
+        }
+    }
+
+  // Success only if every single token parsed into array
+  if ((hand_size != 0) && (hand_size == num_tokens))
+    {
+      *hand_array_out = hand_array;
+      *hand_size_out = hand_size;
+      success = true;
+    }
+
+  return success;
 }
 
+/**
+ * @brief Parse a string representing the players bid into a bid struct
+ * @details Expects a string of the following format "q,v" where "q" is the
+ * decimal value of the bid quantity, and "v" the decimal value of the bid
+ * value.
+ * @param bid_str Input string to parse
+ * @param bid_out Pointer to output bid struct
+ * @return true Complete string parsed successfully
+ * @return false Could not parse complete string
+ */
 bool
 parse_bid_str (char *bid_str, perudo_bid_s *bid_out)
 {
-  return false;
+  bool success = false;
+  perudo_bid_s bid;
+  const char delim[] = ",";
+  char *quantity_token = nullptr;
+  char *value_token = nullptr;
+  char *saveptr;
+
+  quantity_token = strtok_r (bid_str, delim, &saveptr);
+  value_token = strtok_r (nullptr, delim, &saveptr);
+
+  if (parse_ul_decimal (quantity_token, &bid.quantity)
+      && parse_ul_decimal (value_token, &bid.value))
+    {
+      success = true;
+      *bid_out = bid;
+    }
+
+  return success;
 }
 
+/**
+ * @brief Parse all provided game state arguments
+ *
+ * @param game_state_out Pointer to output game state struct
+ * @return true All arguments parsed successfully
+ * @return false Arguments not parsed successfully
+ */
 bool
-parse_game_state (unsigned int total_dice, char *hand_str, char *bid_str,
-                  bool palefico_flag, unsigned int faces,
-                  perudo_game_state_s *game_state_out)
+parse_game_args (perudo_game_state_s *game_state_out)
 {
   bool success = true;
-  perudo_game_state_s parsed_game_state;
+  perudo_game_state_s state;
 
-  // Parse easy integer/bool values first
-  parsed_game_state.palefico_flag = palefico_flag;
+  state.palefico_flag = m_palefico_flag;
 
-  if (faces == 0)
+  if (m_face_arg_str[0] == '\0')
     {
-      fprintf (stderr, "Invalid argument for '-f' option\n");
-      success = false;
+      // Face arg not provided, ignore and set to default
+      state.n_faces = DEFAULT_N_FACES;
     }
-  else
+  else if (!parse_ul_decimal (m_face_arg_str, &state.n_faces))
     {
-      parsed_game_state.n_faces = faces;
-    }
-
-  if (total_dice == 0)
-    {
-      fprintf (stderr, "No valid argument for required '-t' option\n");
-      success = false;
-    }
-  else
-    {
-      parsed_game_state.n_total_dice = total_dice;
-    }
-
-  if (!parse_bid_str (bid_str, &(parsed_game_state.current_bid)))
-    {
-      fprintf (stderr, "No valid argument for required '-b' option\n");
+      fprintf (stderr, "Invalid argument for optional '-f/--faces' option\n");
       success = false;
     }
 
-  parsed_game_state.hand_size
-      = parse_hand_str (hand_str, &(parsed_game_state.hand_array));
-  if (parsed_game_state.hand_size == 0)
+  if (!parse_ul_decimal (m_total_dice_arg_str, &state.n_total_dice))
     {
-      fprintf (stderr, "No valid argument for required '-d' option\n");
+      fprintf (stderr, "No valid argument for required '-t/--total' option\n");
+      success = false;
+    }
+
+  if (!parse_bid_str (m_bid_arg_str, &state.current_bid))
+    {
+      fprintf (stderr, "No valid argument for required '-b/--bid' option\n");
+      success = false;
+    }
+
+  if (!parse_hand_str (m_hand_arg_str, &state.hand_array, &state.hand_size))
+    {
+      fprintf (stderr, "No valid argument for required '-d/--hand' option\n");
       success = false;
     }
 
   if (success)
     {
-      *game_state_out = parsed_game_state;
+      *game_state_out = state;
     }
 
   return success;
@@ -145,17 +232,15 @@ parse_game_state (unsigned int total_dice, char *hand_str, char *bid_str,
 /***************************************************************
  * Publc Function Definitions
  **************************************************************/
-parser_data_s
+parse_result_s
 parser (int argc, char *argv[])
 {
-  parser_data_s parse_result;
-
+  parse_result_s result;
   opterr = 0; // suppress `getopt_long()` default error message
   int opt;
 
   while (1)
     {
-      bool opt_arg_parse_fail = false;
       opt = getopt_long (argc, argv, OPTIONS_SHORT, OPTIONS_LONG, nullptr);
 
       // End of options
@@ -171,81 +256,60 @@ parser (int argc, char *argv[])
           break;
 
         case 'h':
-          parse_result.help_flag = true;
+          result.help_flag = true;
           break;
 
         case 'v':
-          parse_result.version_flag = true;
+          result.version_flag = true;
           break;
 
         case 't':
-          if (!parse_ul_decimal (optarg, &total_dice))
+          if (strlen (optarg) < MAX_TOTAL_DICE_ARG_LEN)
             {
-              opt_arg_parse_fail = true;
+              strcpy (m_total_dice_arg_str, optarg);
             }
           break;
 
         case 'd':
-          if (strlen (optarg) < HAND_STR_BUFFER_SIZE)
+          if (strlen (optarg) < MAX_HAND_ARG_LEN)
             {
-              strcpy (hand_str, optarg);
-            }
-          else
-            {
-              opt_arg_parse_fail = true;
+              strcpy (m_hand_arg_str, optarg);
             }
           break;
 
         case 'b':
-          if (strlen (optarg) < BID_STR_BUFFER_SIZE)
+          if (strlen (optarg) < MAX_BID_ARG_LEN)
             {
-              strcpy (bid_str, optarg);
-            }
-          else
-            {
-              opt_arg_parse_fail = true;
+              strcpy (m_bid_arg_str, optarg);
             }
           break;
 
         case 'p':
-          palefico_flag = true;
+          m_palefico_flag = true;
           break;
 
         case 'f':
-          if (!parse_ul_decimal (optarg, &faces))
+          if (strlen (optarg) < MAX_FACE_ARG_LEN)
             {
-              opt_arg_parse_fail = true;
+              strcpy (m_face_arg_str, optarg);
             }
           break;
 
         case ':':
-          fprintf (stderr, "Missing required option arguments\n");
+          // Ignore for now, will be caught at a later stage by argument
+          // buffers being empty
           break;
 
         case '?':
-          printf ("invalid option\n");
+          // Ignore for now
           break;
 
         default:
           break;
         }
-
-      if (opt_arg_parse_fail)
-        {
-          fprintf (stderr, "Error parsing option '%c' with argument '%s'\n",
-                   opt, optarg);
-        }
     }
 
-  parse_result.parse_success
-      = parse_game_state (total_dice, hand_str, bid_str, palefico_flag, faces,
-                          &(parse_result.game_state));
+  result.parse_success = parse_game_args (&result.game_state);
 
-  printf ("palefico_flag %d\n", palefico_flag);
-  printf ("total_dice: %d\n", total_dice);
-  printf ("hand_str: %s\n", hand_str);
-  printf ("bid_str: %s\n", bid_str);
-  printf ("faces: %d\n", faces);
-
-  return parse_result;
+  return result;
 }
