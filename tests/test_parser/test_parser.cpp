@@ -140,7 +140,41 @@ INSTANTIATE_TEST_SUITE_P (
                        ArgValidTestParam{ "-b 1", false },     // 1 arg
                        ArgValidTestParam{ "-b 1,", false },
                        ArgValidTestParam{ "-b 1,x", false }, // 1 invalid arg
+                       ArgValidTestParam{ "-b x,2", false },
                        ArgValidTestParam{ "-b x,y", false }, // Both invalid
                        ArgValidTestParam{ "-b ", false },    // Whitespace
                        ArgValidTestParam{ "-b", false },     // No arg
                        ArgValidTestParam{ "", false }));     // No opt
+
+/***************************************************************
+ * Tests for -d arg
+ **************************************************************/
+
+class HandArgValidParametrisedTestFixture
+    : public ArgValidParametrisedTestFixture
+{
+  void
+  SetUp ()
+  {
+    param = GetParam ();
+    argsToTest = "-t 30 -b 1,1 " + param.testArg;
+  }
+};
+
+TEST_P (HandArgValidParametrisedTestFixture,
+        HandArgReturnsExpectedParseSuccess)
+{
+  TestArgValidity ();
+};
+
+INSTANTIATE_TEST_SUITE_P (
+    ParserTests, HandArgValidParametrisedTestFixture,
+    ::testing::Values (ArgValidTestParam{ "-d 1,2,3,4,5,6", true },
+                       ArgValidTestParam{ "-d 1,2,3,x", false },
+                       ArgValidTestParam{ "-d 1,2,3x", false },
+                       ArgValidTestParam{ "-d asdf", false },
+                       ArgValidTestParam{ "-d x,2,3,4", false },
+                       ArgValidTestParam{ "-d 1,2,x,3,4", false },
+                       ArgValidTestParam{ "-d ", false },
+                       ArgValidTestParam{ "-d", false },
+                       ArgValidTestParam{ "", false }));
