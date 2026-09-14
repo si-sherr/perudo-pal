@@ -114,26 +114,21 @@ parse_hand_str (char *hand_str, unsigned int **hand_array_out,
   char *token, *saveptr;
   size_t num_tokens = 0;
 
-  while (1)
+  token = strtok_r (hand_str, delim, &saveptr); // first call to reentrant fn
+  for (; token != nullptr; num_tokens++)
     {
-      token = strtok_r (hand_str, delim, &saveptr);
-      hand_str = nullptr;
       unsigned int parsed_int;
       if (parse_ul_decimal (token, &parsed_int))
         {
-          num_tokens++;
           // Realloc to incremented hand_size and add parsed value to end
           hand_array
               = reallocarray (hand_array, ++hand_size, sizeof (hand_array[0]));
           hand_array[hand_size - 1] = parsed_int;
         }
-      else
-        {
-          break;
-        }
+      token = strtok_r (nullptr, delim, &saveptr); // reentrant fn calls
     }
 
-  // Success only if every single token parsed into array
+  // Success only if every single token was parsed into array
   if ((hand_size != 0) && (hand_size == num_tokens))
     {
       *hand_array_out = hand_array;
@@ -167,7 +162,8 @@ parse_bid_str (char *bid_str, perudo_bid_s *bid_out)
   quantity_token = strtok_r (bid_str, delim, &saveptr);
   value_token = strtok_r (nullptr, delim, &saveptr);
 
-  if (parse_ul_decimal (quantity_token, &bid.quantity)
+  if ((strtok_r (nullptr, delim, &saveptr) == nullptr) // no more tokens
+      && parse_ul_decimal (quantity_token, &bid.quantity)
       && parse_ul_decimal (value_token, &bid.value))
     {
       success = true;
