@@ -33,15 +33,6 @@
 #define MAX_FACE_ARG_LEN 8U
 
 /***************************************************************
- * Variables
- **************************************************************/
-static bool m_palefico_flag = DEFAULT_PALEFICO_FLAG;
-static char m_total_dice_arg_str[MAX_TOTAL_DICE_ARG_LEN] = { '\0' };
-static char m_hand_arg_str[MAX_HAND_ARG_LEN] = { '\0' };
-static char m_bid_arg_str[MAX_BID_ARG_LEN] = { '\0' };
-static char m_face_arg_str[MAX_FACE_ARG_LEN] = { '\0' };
-
-/***************************************************************
  * Option Definitions
  **************************************************************/
 static const struct option OPTIONS_LONG[]
@@ -173,66 +164,21 @@ parse_bid_str (char *bid_str, perudo_bid_s *bid_out)
   return success;
 }
 
-/**
- * @brief Parse all provided game state arguments
- *
- * @param game_state_out Pointer to output game state struct
- * @return true All arguments parsed successfully
- * @return false Arguments not parsed successfully
- */
-bool
-parse_game_args (perudo_game_state_s *game_state_out)
-{
-  bool success = true;
-  perudo_game_state_s state;
-
-  state.palefico_flag = m_palefico_flag;
-
-  if (m_face_arg_str[0] == '\0')
-    {
-      // Face arg not provided, ignore and set to default
-      state.n_faces = DEFAULT_N_FACES;
-    }
-  else if (!parse_ul_decimal (m_face_arg_str, &state.n_faces))
-    {
-      fprintf (stderr, "Invalid argument for optional '-f/--faces' option\n");
-      success = false;
-    }
-
-  if (!parse_ul_decimal (m_total_dice_arg_str, &state.n_total_dice))
-    {
-      fprintf (stderr, "No valid argument for required '-t/--total' option\n");
-      success = false;
-    }
-
-  if (!parse_bid_str (m_bid_arg_str, &state.current_bid))
-    {
-      fprintf (stderr, "No valid argument for required '-b/--bid' option\n");
-      success = false;
-    }
-
-  if (!parse_hand_str (m_hand_arg_str, &state.hand_array, &state.hand_size))
-    {
-      fprintf (stderr, "No valid argument for required '-d/--hand' option\n");
-      success = false;
-    }
-
-  if (success)
-    {
-      *game_state_out = state;
-    }
-
-  return success;
-}
-
 /***************************************************************
  * Publc Function Definitions
  **************************************************************/
 parse_result_s
 parser (int argc, char *argv[])
 {
-  parse_result_s result;
+  char total_dice_arg_str[MAX_TOTAL_DICE_ARG_LEN] = { '\0' };
+  char hand_arg_str[MAX_HAND_ARG_LEN] = { '\0' };
+  char bid_arg_str[MAX_BID_ARG_LEN] = { '\0' };
+  char face_arg_str[MAX_FACE_ARG_LEN] = { '\0' };
+  parse_result_s result = { true, false, false, { 0 } };
+
   opterr = 0; // suppress `getopt_long()` default error message
+  optind = 1; // not strictly necessary, but prevents issues from multiple
+              // calls in unit tests
   int opt;
 
   while (1)
@@ -262,32 +208,32 @@ parser (int argc, char *argv[])
         case 't':
           if (strlen (optarg) < MAX_TOTAL_DICE_ARG_LEN)
             {
-              strcpy (m_total_dice_arg_str, optarg);
+              strcpy (total_dice_arg_str, optarg);
             }
           break;
 
         case 'd':
           if (strlen (optarg) < MAX_HAND_ARG_LEN)
             {
-              strcpy (m_hand_arg_str, optarg);
+              strcpy (hand_arg_str, optarg);
             }
           break;
 
         case 'b':
           if (strlen (optarg) < MAX_BID_ARG_LEN)
             {
-              strcpy (m_bid_arg_str, optarg);
+              strcpy (bid_arg_str, optarg);
             }
           break;
 
         case 'p':
-          m_palefico_flag = true;
+          result.game_state.palefico_flag = true;
           break;
 
         case 'f':
           if (strlen (optarg) < MAX_FACE_ARG_LEN)
             {
-              strcpy (m_face_arg_str, optarg);
+              strcpy (face_arg_str, optarg);
             }
           break;
 
@@ -305,7 +251,35 @@ parser (int argc, char *argv[])
         }
     }
 
-  result.parse_success = parse_game_args (&result.game_state);
+  if (face_arg_str[0] == '\0')
+    {
+      // Face arg not provided, ignore and set to default
+      result.game_state.n_faces = DEFAULT_N_FACES;
+    }
+  else if (!parse_ul_decimal (face_arg_str, &result.game_state.n_faces))
+    {
+      fprintf (stderr, "Invalid argument for optional '-f/--faces' option\n");
+      result.parse_success = false;
+    }
+
+  if (!parse_ul_decimal (total_dice_arg_str, &result.game_state.n_total_dice))
+    {
+      fprintf (stderr, "No valid argument for required '-t/--total' option\n");
+      result.parse_success = false;
+    }
+
+  if (!parse_bid_str (bid_arg_str, &result.game_state.current_bid))
+    {
+      fprintf (stderr, "No valid argument for required '-b/--bid' option\n");
+      result.parse_success = false;
+    }
+
+  if (!parse_hand_str (hand_arg_str, &result.game_state.hand_array,
+                       &result.game_state.hand_size))
+    {
+      fprintf (stderr, "No valid argument for required '-d/--hand' option\n");
+      result.parse_success = false;
+    }
 
   return result;
 }
