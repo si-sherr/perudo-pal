@@ -165,7 +165,7 @@ parse_bid_str (char *bid_str, perudo_bid_s *bid_out)
 }
 
 /***************************************************************
- * Publc Function Definitions
+ * Public Function Definitions
  **************************************************************/
 parse_result_s
 parser (int argc, char *argv[])

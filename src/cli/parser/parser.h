@@ -1,7 +1,7 @@
 /**
  * @file parser.h
  * @author Simon Sherriff (simon.sherriff.uk@gmail.com)
- * @brief CLI parser header file
+ * @brief Header file for CLI parser
  *
  */
 
@@ -33,6 +33,14 @@ typedef struct
  * Public Function Prototypes
  **************************************************************/
 
+/**
+ * @brief Parse the command line arguments from `main()`
+ *
+ * @param argc Number of arguments
+ * @param argv Array of argument strings
+ * @return parse_result_s Result struct, containing parsed values (if
+ * successful)
+ */
 parse_result_s parser (int argc, char *argv[]);
 
 #ifdef __cplusplus
