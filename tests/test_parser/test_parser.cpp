@@ -44,7 +44,7 @@ invoke_parser (std::string cmdString)
  **************************************************************/
 TEST (ParserTests, ParsesValidArgsSuccesfully)
 {
-  std::string args = "-t 30 -v -d 1,2,3,4,5,6 -h -b 8,6 -f 5 -p";
+  std::string args = "-t 30 -d 1,2,3,4,5,6 -b 8,6 -f 5 -p";
   unsigned int expected_hand_array[] = { 1, 2, 3, 4, 5, 6 };
   parse_result_s result = invoke_parser (args);
 
@@ -56,8 +56,6 @@ TEST (ParserTests, ParsesValidArgsSuccesfully)
   ASSERT_EQ (result.game_state.current_bid.value, 6);
   ASSERT_EQ (result.game_state.n_faces, 5);
   ASSERT_TRUE (result.game_state.palefico_flag);
-  ASSERT_TRUE (result.version_flag);
-  ASSERT_TRUE (result.help_flag);
 }
 
 /***************************************************************

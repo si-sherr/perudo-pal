@@ -174,7 +174,7 @@ parser (int argc, char *argv[])
   char hand_arg_str[MAX_HAND_ARG_LEN] = { '\0' };
   char bid_arg_str[MAX_BID_ARG_LEN] = { '\0' };
   char face_arg_str[MAX_FACE_ARG_LEN] = { '\0' };
-  parse_result_s result = { true, false, false, { 0 } };
+  parse_result_s result = { false, false, false, { 0 } };
 
   opterr = 0; // suppress `getopt_long()` default error message
   optind = 1; // not strictly necessary, but prevents issues from multiple
@@ -251,34 +251,44 @@ parser (int argc, char *argv[])
         }
     }
 
-  if (face_arg_str[0] == '\0')
+  if (!result.help_flag && !result.version_flag)
     {
-      // Face arg not provided, ignore and set to default
-      result.game_state.n_faces = DEFAULT_N_FACES;
-    }
-  else if (!parse_ul_decimal (face_arg_str, &result.game_state.n_faces))
-    {
-      fprintf (stderr, "Invalid argument for optional '-f/--faces' option\n");
-      result.parse_success = false;
-    }
+      result.parse_success = true;
 
-  if (!parse_ul_decimal (total_dice_arg_str, &result.game_state.n_total_dice))
-    {
-      fprintf (stderr, "No valid argument for required '-t/--total' option\n");
-      result.parse_success = false;
-    }
+      if (face_arg_str[0] == '\0')
+        {
+          // Face arg not provided, ignore and set to default
+          result.game_state.n_faces = DEFAULT_N_FACES;
+        }
+      else if (!parse_ul_decimal (face_arg_str, &result.game_state.n_faces))
+        {
+          fprintf (stderr,
+                   "Invalid argument for optional '-f/--faces' option\n");
+          result.parse_success = false;
+        }
 
-  if (!parse_bid_str (bid_arg_str, &result.game_state.current_bid))
-    {
-      fprintf (stderr, "No valid argument for required '-b/--bid' option\n");
-      result.parse_success = false;
-    }
+      if (!parse_ul_decimal (total_dice_arg_str,
+                             &result.game_state.n_total_dice))
+        {
+          fprintf (stderr,
+                   "No valid argument for required '-t/--total' option\n");
+          result.parse_success = false;
+        }
 
-  if (!parse_hand_str (hand_arg_str, &result.game_state.hand_array,
-                       &result.game_state.hand_size))
-    {
-      fprintf (stderr, "No valid argument for required '-d/--hand' option\n");
-      result.parse_success = false;
+      if (!parse_bid_str (bid_arg_str, &result.game_state.current_bid))
+        {
+          fprintf (stderr,
+                   "No valid argument for required '-b/--bid' option\n");
+          result.parse_success = false;
+        }
+
+      if (!parse_hand_str (hand_arg_str, &result.game_state.hand_array,
+                           &result.game_state.hand_size))
+        {
+          fprintf (stderr,
+                   "No valid argument for required '-d/--hand' option\n");
+          result.parse_success = false;
+        }
     }
 
   return result;
