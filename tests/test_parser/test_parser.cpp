@@ -44,7 +44,7 @@ invoke_parser (std::string cmdString)
  **************************************************************/
 TEST (ParserTests, ParsesValidArgsSuccesfully)
 {
-  std::string args = "-t 30 -d 1,2,3,4,5,6 -b 8,6 -f 5 -p";
+  std::string args = "-t 30 -v -d 1,2,3,4,5,6 -h -b 8,6 -f 5 -p";
   unsigned int expected_hand_array[] = { 1, 2, 3, 4, 5, 6 };
   parse_result_s result = invoke_parser (args);
 
@@ -56,6 +56,8 @@ TEST (ParserTests, ParsesValidArgsSuccesfully)
   ASSERT_EQ (result.game_state.current_bid.value, 6);
   ASSERT_EQ (result.game_state.n_faces, 5);
   ASSERT_TRUE (result.game_state.palefico_flag);
+  ASSERT_TRUE (result.version_flag);
+  ASSERT_TRUE (result.help_flag);
 }
 
 /***************************************************************
@@ -108,15 +110,13 @@ INSTANTIATE_TEST_SUITE_P (
     ::testing::Values (ArgValidTestParam{ "-t 30", true },
                        ArgValidTestParam{ "-t 30d", false },
                        ArgValidTestParam{ "-t xx", false },
-                       ArgValidTestParam{ "-t ", false }, // Whitespace
-                       ArgValidTestParam{ "-t", false },  // No argument
-                       ArgValidTestParam{ "", false }     // Option not given
-                       ));
+                       ArgValidTestParam{ "-t ", false },
+                       ArgValidTestParam{ "-t", false },
+                       ArgValidTestParam{ "", false }));
 
 /***************************************************************
  * Tests for -b arg
  **************************************************************/
-
 class BidArgValidParametrisedTestFixture
     : public ArgValidParametrisedTestFixture
 {
@@ -136,20 +136,18 @@ TEST_P (BidArgValidParametrisedTestFixture, BidArgReturnsExpectedParseSuccess)
 INSTANTIATE_TEST_SUITE_P (
     ParserTests, BidArgValidParametrisedTestFixture,
     ::testing::Values (ArgValidTestParam{ "-b 1,2", true },
-                       ArgValidTestParam{ "-b 1,2,3", false }, // >2 args
-                       ArgValidTestParam{ "-b 1", false },     // 1 arg
+                       ArgValidTestParam{ "-b 1,2,3", false },
+                       ArgValidTestParam{ "-b 1", false },
                        ArgValidTestParam{ "-b 1,", false },
-                       ArgValidTestParam{ "-b 1,x", false }, // 1 invalid arg
+                       ArgValidTestParam{ "-b 1,x", false },
                        ArgValidTestParam{ "-b x,2", false },
-                       ArgValidTestParam{ "-b x,y", false }, // Both invalid
-                       ArgValidTestParam{ "-b ", false },    // Whitespace
-                       ArgValidTestParam{ "-b", false },     // No arg
-                       ArgValidTestParam{ "", false }));     // No opt
+                       ArgValidTestParam{ "-b x,y", false },
+                       ArgValidTestParam{ "-b ", false },
+                       ArgValidTestParam{ "-b", false }));
 
 /***************************************************************
  * Tests for -d arg
  **************************************************************/
-
 class HandArgValidParametrisedTestFixture
     : public ArgValidParametrisedTestFixture
 {
@@ -178,3 +176,71 @@ INSTANTIATE_TEST_SUITE_P (
                        ArgValidTestParam{ "-d ", false },
                        ArgValidTestParam{ "-d", false },
                        ArgValidTestParam{ "", false }));
+
+/***************************************************************
+ * Tests for -f arg
+ **************************************************************/
+class FacesArgValidParametrisedTestFixture
+    : public ArgValidParametrisedTestFixture
+{
+  void
+  SetUp ()
+  {
+    param = GetParam ();
+    argsToTest = "-t 30 -b 1,1 -d 1 " + param.testArg;
+  }
+};
+
+TEST_P (FacesArgValidParametrisedTestFixture,
+        FacesArgReturnsExpectedParseSuccess)
+{
+  TestArgValidity ();
+};
+
+INSTANTIATE_TEST_SUITE_P (ParserTests, FacesArgValidParametrisedTestFixture,
+                          ::testing::Values (ArgValidTestParam{ "-f 5", true },
+                                             ArgValidTestParam{ "", true },
+                                             ArgValidTestParam{ "-f x",
+                                                                false }));
+
+TEST (ParserTests, NoFacesArgReturnsExpectedDefault)
+{
+  std::string noFacesArgStr = "-t 1 -b 1,1 -d 1";
+  parse_result_s result = invoke_parser (noFacesArgStr);
+
+  ASSERT_TRUE (result.parse_success);
+  ASSERT_EQ (result.game_state.n_faces, 6);
+}
+
+/***************************************************************
+ * Tests for boolean flags
+ **************************************************************/
+TEST (ParserTests, ParsesPaleficoFlag)
+{
+  std::string noPaleficoCmdStr = "-t 1 -b 3,4 -d 1";
+  std::string paleficoCmdStr = noPaleficoCmdStr + " -p";
+
+  parse_result_s no_palefico_result = invoke_parser (noPaleficoCmdStr);
+  parse_result_s palefico_result = invoke_parser (paleficoCmdStr);
+
+  ASSERT_TRUE (palefico_result.game_state.palefico_flag);
+  ASSERT_FALSE (no_palefico_result.game_state.palefico_flag);
+}
+
+TEST (ParserTests, ParsesVersionFlag)
+{
+  std::string versionCmdStr = " -v";
+
+  parse_result_s version_result = invoke_parser (versionCmdStr);
+
+  ASSERT_TRUE (version_result.version_flag);
+}
+
+TEST (ParserTests, ParsesHelpFlag)
+{
+  std::string helpCmdStr = " -h";
+
+  parse_result_s help_result = invoke_parser (helpCmdStr);
+
+  ASSERT_TRUE (help_result.help_flag);
+}
