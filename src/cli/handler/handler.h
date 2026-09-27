@@ -41,7 +41,7 @@ void handle_version (void);
  * @return true Game state handled successfully
  * @return false Error in handling the game state
  */
-bool handle_game_state (const perudo_game_state_s *game_state);
+bool handle_game_state (const perudo_game_state_s *p_game_state);
 
 #ifdef __cplusplus
 }
