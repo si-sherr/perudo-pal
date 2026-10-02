@@ -7,7 +7,7 @@ SCRIPT_DIR=$(dirname "$0")
 cd "$SCRIPT_DIR/.."
 
 # Configure CMake
-CC=gcc CXX=g++ cmake -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo
+cmake -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo
 
 # Build
 cmake --build build
