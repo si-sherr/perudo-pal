@@ -141,11 +141,11 @@ handle_game_state (const perudo_game_state_s *p_game_state)
     {
       bid_summary_s current_bid_summary
           = generate_bid_summary (p_game_state, &p_game_state->current_bid);
-      bid_summary_s next_bid_summary = generate_bid_summary (
-          p_game_state,
-          &p_game_state
-               ->current_bid); // No functionality yet to find next
-                               // best bid, current bid as placeholder for now
+
+      perudo_bid_s next_best_bid = find_next_best_bid (p_game_state);
+      bid_summary_s next_bid_summary
+          = generate_bid_summary (p_game_state, &next_best_bid);
+
       print_bid_summary_table (&current_bid_summary, &next_bid_summary);
       success = true;
     }

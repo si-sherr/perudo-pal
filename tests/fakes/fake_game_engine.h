@@ -17,8 +17,8 @@ FAKE_VALUE_FUNC (double, probability_bid_incorrect,
                  const perudo_game_state_s *, const perudo_bid_s *);
 FAKE_VALUE_FUNC (double, probability_bid_exact, const perudo_game_state_s *,
                  const perudo_bid_s *);
-FAKE_VALUE_FUNC (bool, find_next_bid, const perudo_game_state_s *,
-                 const perudo_bid_s *);
+FAKE_VALUE_FUNC (perudo_bid_s, find_next_best_bid,
+                 const perudo_game_state_s *);
 
 inline void
 reset_fake_game_engine (void)
@@ -29,7 +29,7 @@ reset_fake_game_engine (void)
   RESET_FAKE (probability_bid_correct);
   RESET_FAKE (probability_bid_incorrect);
   RESET_FAKE (probability_bid_exact);
-  RESET_FAKE (find_next_bid);
+  RESET_FAKE (find_next_best_bid);
 }
 
 #ifdef __cplusplus
