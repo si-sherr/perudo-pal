@@ -170,7 +170,7 @@ typedef struct
 } BidLegalTestParam;
 
 class BidLegalParametrisedTestFixture
-    : public ::testing ::TestWithParam<BidLegalTestParam>
+    : public ::testing::TestWithParam<BidLegalTestParam>
 {
 };
 
@@ -309,7 +309,7 @@ typedef struct
 } BidProbTestParam;
 
 class BidProbParametrisedTestFixture
-    : public ::testing ::TestWithParam<BidProbTestParam>
+    : public ::testing::TestWithParam<BidProbTestParam>
 {
 protected:
   BidProbTestParam param;
