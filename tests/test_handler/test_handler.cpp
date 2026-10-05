@@ -56,13 +56,14 @@ TEST_F (HandlerTestFixture, HandleValidGameStateQueriesCurrentBidProbabilities)
   probability_bid_exact_fake.return_val = 0.3;
 
   ASSERT_TRUE (handle_game_state (&kDefaultGameState));
-  ASSERT_EQ (probability_bid_correct_fake.arg0_val, &kDefaultGameState);
-  ASSERT_EQ (probability_bid_correct_fake.arg1_val,
+  ASSERT_EQ (probability_bid_correct_fake.arg0_history[0], &kDefaultGameState);
+  ASSERT_EQ (probability_bid_correct_fake.arg1_history[0],
              &(kDefaultGameState.current_bid));
-  ASSERT_EQ (probability_bid_incorrect_fake.arg0_val, &kDefaultGameState);
-  ASSERT_EQ (probability_bid_incorrect_fake.arg1_val,
+  ASSERT_EQ (probability_bid_exact_fake.arg0_history[0], &kDefaultGameState);
+  ASSERT_EQ (probability_bid_exact_fake.arg1_history[0],
              &(kDefaultGameState.current_bid));
-  ASSERT_EQ (probability_bid_exact_fake.arg0_val, &kDefaultGameState);
-  ASSERT_EQ (probability_bid_exact_fake.arg1_val,
+  ASSERT_EQ (probability_bid_incorrect_fake.arg0_history[0],
+             &kDefaultGameState);
+  ASSERT_EQ (probability_bid_incorrect_fake.arg1_history[0],
              &(kDefaultGameState.current_bid));
 }
