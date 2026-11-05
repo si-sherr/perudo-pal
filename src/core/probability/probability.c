@@ -21,7 +21,7 @@
 double
 binomial_probability (double p, unsigned int k, unsigned int n)
 {
-  double prob = 0.0f;
+  double prob = 0.0;
 
   if (k <= n)
     {

@@ -297,6 +297,38 @@ TEST_F (GameEngineTestFixture, ExpectedBidProbIfInvalidBid)
   ASSERT_EQ (cumulative_binomial_probability_fake.call_count, 0);
 }
 
+TEST_F (GameEngineTestFixture, ExpectedProbIfWinImpossible)
+{
+  unsigned int hand[] = { 2, 2, 2, 3 };
+  perudo_game_state_s game_state = { .n_total_dice = 6,
+                                     .n_faces = TEST_DEFAULT_FACES,
+                                     .hand_size = 4,
+                                     .hand_array = hand,
+                                     .current_bid = { 4, 2 },
+                                     .palefico_flag = false };
+
+  perudo_bid_s impossible_bid
+      = { 6, 2 }; // Bid is legal, but impossible given known dice
+  perudo_bid_s possible_bid = { 5, 2 };
+
+  cumulative_binomial_probability_fake.return_val = 0.5;
+  binomial_probability_fake.return_val = 0.5;
+
+  // Assert that all probabilities default to 0 for impossible bid,
+  // irrespective of what probability mock returns
+  ASSERT_DOUBLE_EQ (probability_bid_correct (&game_state, &impossible_bid),
+                    0.0);
+  ASSERT_DOUBLE_EQ (probability_bid_incorrect (&game_state, &impossible_bid),
+                    1.0);
+  ASSERT_DOUBLE_EQ (probability_bid_exact (&game_state, &impossible_bid), 0.0);
+
+  // Possible bid should return probabilty mock return value
+  ASSERT_DOUBLE_EQ (probability_bid_correct (&game_state, &possible_bid), 0.5);
+  ASSERT_DOUBLE_EQ (probability_bid_incorrect (&game_state, &possible_bid),
+                    0.5);
+  ASSERT_DOUBLE_EQ (probability_bid_exact (&game_state, &possible_bid), 0.5);
+}
+
 typedef struct
 {
   unsigned int total_dice;

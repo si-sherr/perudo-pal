@@ -368,14 +368,21 @@ probability_bid_incorrect (const perudo_game_state_s *p_game_state,
       unsigned int n_unknown_dice_to_satisfy_bid
           = unknown_dice_to_satisy_bid (p_game_state, p_candidate_bid);
 
-      double dice_probability
-          = dice_roll_probability (p_game_state, p_candidate_bid);
+      // Only calculate probability if hitting bid is even possible given
+      // number of unknown dice. Otherwise returned probability defaults to 0,
+      // which would imply 100% prob of being correct
+      if (n_unknown_dice_to_satisfy_bid <= n_unknown_dice)
+        {
+          double dice_probability
+              = dice_roll_probability (p_game_state, p_candidate_bid);
 
-      // Cumulative probability function gives P(X<=k), Probabilty that bid
-      // is incorrect is P(X<k), where X = `n_unknown_dice` and k =
-      // `n_unknown_dice_to_satisfy_bid` which is also equal to P(X<=k-1).
-      prob = cumulative_binomial_probability (
-          dice_probability, n_unknown_dice_to_satisfy_bid - 1, n_unknown_dice);
+          // Cumulative probability function gives P(X<=k), Probabilty that bid
+          // is incorrect is P(X<k), where X = `n_unknown_dice` and k =
+          // `n_unknown_dice_to_satisfy_bid` which is also equal to P(X<=k-1).
+          prob = cumulative_binomial_probability (
+              dice_probability, n_unknown_dice_to_satisfy_bid - 1,
+              n_unknown_dice);
+        }
     }
 
   return prob;
@@ -385,7 +392,7 @@ double
 probability_bid_exact (const perudo_game_state_s *p_game_state,
                        const perudo_bid_s *p_candidate_bid)
 {
-  // If came or bid aren't valid, default to 0% chance of being exact
+  // If game or bid aren't valid, default to 0% chance of being exact
   double prob = 0.0;
 
   if (is_game_valid (p_game_state)
@@ -400,8 +407,11 @@ probability_bid_exact (const perudo_game_state_s *p_game_state,
       double dice_probability
           = dice_roll_probability (p_game_state, p_candidate_bid);
 
-      prob = binomial_probability (
-          dice_probability, n_unknown_dice_to_satisfy_bid, n_unknown_dice);
+      if (n_unknown_dice_to_satisfy_bid <= n_unknown_dice)
+        {
+          prob = binomial_probability (
+              dice_probability, n_unknown_dice_to_satisfy_bid, n_unknown_dice);
+        }
     }
 
   return prob;
