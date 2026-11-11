@@ -1,5 +1,7 @@
 set(SOURCES probability/probability.c game_engine/game_engine.c)
 
+add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+
 add_library(ppal-core STATIC ${SOURCES})
 
 # libm requires explicit linkage

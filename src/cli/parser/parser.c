@@ -99,7 +99,7 @@ parse_hand_str (char *hand_str, unsigned int **hand_array_out,
                 size_t *hand_size_out)
 {
   bool success = false;
-  unsigned int *hand_array = malloc (0);
+  unsigned int *hand_array = malloc (sizeof (unsigned int));
   size_t hand_size = 0;
   const char delim[] = ",";
   char *token, *saveptr;

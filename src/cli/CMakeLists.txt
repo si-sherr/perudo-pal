@@ -2,7 +2,7 @@ project(perudo-pal-cli)
 
 set(SOURCES main.c parser/parser.c handler/handler.c)
 
-add_compile_options(-Wall -Wformat=2)
+add_compile_options(-Wall -Wextra -Wpedantic -Wformat=2 -Werror)
 
 add_executable(ppal ${SOURCES})
 
