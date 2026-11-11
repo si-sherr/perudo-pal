@@ -12,5 +12,6 @@ target_link_libraries(ppal ppal-core)
 
 target_include_directories(
   ppal
-  PRIVATE ${CMAKE_CURRENT_LIST_DIR}/parser ${CMAKE_CURRENT_LIST_DIR}/handler
-          ${CMAKE_SOURCE_DIR}/src/version)
+  PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/parser ${CMAKE_CURRENT_LIST_DIR}/handler
+    ${CMAKE_SOURCE_DIR}/src/version)
