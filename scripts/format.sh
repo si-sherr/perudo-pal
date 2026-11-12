@@ -13,7 +13,7 @@ cd "$SCRIPT_DIR/.."
 
 echo Running clang-format...
 # Find all source files and format
-find $SRC_DIRS -iname '*.h' -o -iname '*.c' -o -iname '*.cpp' | xargs clang-format -i --verbose
+find ${SRC_DIRS[@]} -iname '*.h' -o -iname '*.c' -o -iname '*.cpp' | xargs clang-format -i --verbose
 
 # Optionally format cmake files if cmakefmt is installed
 if command -v cmakefmt >/dev/null 2>&1 
