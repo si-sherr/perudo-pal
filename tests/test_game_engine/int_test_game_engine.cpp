@@ -1,5 +1,4 @@
 #include "game_engine.h"
-#include "gtest/gtest.h"
 #include <gtest/gtest.h>
 
 #define TEST_DEFAULT_FACES 6

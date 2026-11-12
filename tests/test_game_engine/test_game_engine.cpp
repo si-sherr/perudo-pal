@@ -1,6 +1,6 @@
 #include "fake_probability.h"
-#include "fff.h"
 #include "game_engine.h"
+#include <fff.h>
 #include <gtest/gtest.h>
 
 DEFINE_FFF_GLOBALS;
