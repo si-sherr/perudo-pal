@@ -62,14 +62,11 @@ choose (unsigned int n, unsigned int k)
     {
       retval = 0;
     }
-  else if (k == 0)
+  else if ((k == 0) || (k == n))
     {
       retval = 1;
     }
-  else if (k == n)
-    {
-      retval = 1;
-    }
+
   // Recursion
   else
     {

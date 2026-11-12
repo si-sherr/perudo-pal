@@ -5,6 +5,9 @@
  *
  */
 
+// NOLINTBEGIN(misc-include-cleaner): getopt.h externs do not play nice with
+// clang-tidy check
+
 /***************************************************************
  * Implements
  **************************************************************/
@@ -13,6 +16,7 @@
 /***************************************************************
  * Includes
  **************************************************************/
+#include "game_engine.h"
 #include <errno.h>
 #include <getopt.h>
 #include <stdbool.h>
@@ -29,8 +33,14 @@
 
 #define MAX_TOTAL_DICE_ARG_LEN 8U
 #define MAX_HAND_ARG_LEN 32U
+#define MAX_G_HAND_ARRAY_LEN 16U
 #define MAX_BID_ARG_LEN 16U
 #define MAX_FACE_ARG_LEN 8U
+
+/***************************************************************
+ * Variables
+ **************************************************************/
+static unsigned int g_hand_array[MAX_G_HAND_ARRAY_LEN];
 
 /***************************************************************
  * Option Definitions
@@ -59,7 +69,7 @@ static const char OPTIONS_SHORT[] = ":hvt:d:b:pf:";
  * @return true String parsed successfully
  * @return false Could not parse string
  */
-bool
+static bool
 parse_ul_decimal (char *str, unsigned int *ul_out)
 {
   bool success = false;
@@ -84,22 +94,18 @@ parse_ul_decimal (char *str, unsigned int *ul_out)
 }
 
 /**
- * @brief Parse a string representing the player's hand into an array of
- * unsigned integers
+ * @brief Parse a string representing the player's hand into a static buffer
  * @details This function expects a string of the form "1,2,3,4,5,6"
  *
  * @param hand_str Input string to parse
- * @param hand_array_out Pointer to output array
- * @param hand_size_out Pointer to the size of the parsed string
+ * @param hand_size_out Pointer to the length of the parsed buffer
  * @return true Complete string parsed successfully
  * @return false Could not parse complete string
  */
-bool
-parse_hand_str (char *hand_str, unsigned int **hand_array_out,
-                size_t *hand_size_out)
+static bool
+parse_hand_str (char *hand_str, size_t *hand_size_out)
 {
   bool success = false;
-  unsigned int *hand_array = malloc (sizeof (unsigned int));
   size_t hand_size = 0;
   const char delim[] = ",";
   char *token, *saveptr;
@@ -108,13 +114,18 @@ parse_hand_str (char *hand_str, unsigned int **hand_array_out,
   token = strtok_r (hand_str, delim, &saveptr); // first call to reentrant fn
   for (; token != nullptr; num_tokens++)
     {
-      unsigned int parsed_int;
-      if (parse_ul_decimal (token, &parsed_int))
+      unsigned int parsed_uint;
+      if (parse_ul_decimal (token, &parsed_uint))
         {
-          // Realloc to incremented hand_size and add parsed value to end
-          hand_array
-              = reallocarray (hand_array, ++hand_size, sizeof (hand_array[0]));
-          hand_array[hand_size - 1] = parsed_int;
+          if (hand_size < MAX_G_HAND_ARRAY_LEN)
+            {
+              g_hand_array[hand_size] = parsed_uint;
+              hand_size++;
+            }
+          else
+            {
+              break;
+            }
         }
       token = strtok_r (nullptr, delim, &saveptr); // reentrant fn calls
     }
@@ -122,7 +133,6 @@ parse_hand_str (char *hand_str, unsigned int **hand_array_out,
   // Success only if every single token was parsed into array
   if ((hand_size != 0) && (hand_size == num_tokens))
     {
-      *hand_array_out = hand_array;
       *hand_size_out = hand_size;
       success = true;
     }
@@ -140,7 +150,7 @@ parse_hand_str (char *hand_str, unsigned int **hand_array_out,
  * @return true Complete string parsed successfully
  * @return false Could not parse complete string
  */
-bool
+static bool
 parse_bid_str (char *bid_str, perudo_bid_s *bid_out)
 {
   bool success = false;
@@ -237,15 +247,8 @@ parser (int argc, char *argv[])
             }
           break;
 
-        case ':':
-          // Ignore for now, will be caught at a later stage by argument
-          // buffers being empty
-          break;
-
-        case '?':
-          // Ignore for now
-          break;
-
+        case ':': // missing arg, caught later by empty buffers
+        case '?': // unrecognised, ignore
         default:
           break;
         }
@@ -282,14 +285,19 @@ parser (int argc, char *argv[])
           result.parse_success = false;
         }
 
-      if (!parse_hand_str (hand_arg_str, &result.game_state.hand_array,
-                           &result.game_state.hand_size))
+      if (!parse_hand_str (hand_arg_str, &result.game_state.hand_size))
         {
           fprintf (stderr,
                    "No valid argument for required '-d/--hand' option\n");
           result.parse_success = false;
         }
+      else
+        {
+          result.game_state.hand_array = g_hand_array;
+        }
     }
 
   return result;
 }
+
+// NOLINTEND(misc-include-cleaner)

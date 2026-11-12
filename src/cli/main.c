@@ -10,7 +10,6 @@
  **************************************************************/
 #include "handler.h"
 #include "parser.h"
-#include <stdio.h>
 #include <stdlib.h>
 
 /***************************************************************
@@ -32,13 +31,10 @@ main (int argc, char *argv[])
       handle_version ();
       exit_code = EXIT_SUCCESS;
     }
-  else if (!parser_result.parse_success)
+  else if ((!parser_result.parse_success)
+           || (!handle_game_state (&parser_result.game_state)))
     {
       handle_usage (true); // Print usage, this time to stderr
-    }
-  else if (!handle_game_state (&parser_result.game_state))
-    {
-      handle_usage (true);
     }
 
   exit (exit_code);

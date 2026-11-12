@@ -65,7 +65,7 @@ typedef struct
  * @return bid_summary_s Struct containing a summary of the bid and its
  * probabilities
  */
-bid_summary_s
+static bid_summary_s
 generate_bid_summary (const perudo_game_state_s *p_game_state,
                       const perudo_bid_s *p_bid)
 {
@@ -82,7 +82,7 @@ generate_bid_summary (const perudo_game_state_s *p_game_state,
  * @param bid_label String used to label the bid
  * @param p_bid_summary Pointer to the bid summary to print
  */
-void
+static void
 print_bid_summary_row (char *bid_label, const bid_summary_s *p_bid_summary)
 {
   printf ("%-*s%*u%*u%*.3f%*.3f%*.3f\n", OUT_TABLE_BID_NAME_COL_W, bid_label,
@@ -98,7 +98,7 @@ print_bid_summary_row (char *bid_label, const bid_summary_s *p_bid_summary)
  * @param p_current_bid_summary Summary of the current bid
  * @param p_next_bid_summary Summary of the next best bid
  */
-void
+static void
 print_bid_summary_table (const bid_summary_s *p_current_bid_summary,
                          const bid_summary_s *p_next_bid_summary)
 {
@@ -127,7 +127,7 @@ handle_usage (bool is_error)
 }
 
 void
-handle_version (void)
+handle_version ()
 {
   printf ("%s\n", PPAL_VERSION);
 }

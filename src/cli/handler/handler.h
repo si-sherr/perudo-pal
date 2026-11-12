@@ -32,7 +32,7 @@ void handle_usage (bool is_error);
  * @brief Print the app version information to stdout
  *
  */
-void handle_version (void);
+void handle_version ();
 
 /**
  * @brief Handle the parsed game state

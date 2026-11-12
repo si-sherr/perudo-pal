@@ -19,7 +19,6 @@
 /***************************************************************
  * Defines
  **************************************************************/
-
 /**
  * @brief Dice value considered "wild"
  *
@@ -36,18 +35,17 @@
 /***************************************************************
  * Private Function Definitions
  **************************************************************/
-
 /**
  * @brief Calculate the number of unknown dice (dice in play that are not in
  * the player's current hand) that are required to satisfy the provided bid.
  * @details This function takes into account number dice satisfying the bid
- * that are in the player's current hand, and sutracts them from the candidate
+ * that are in the player's current hand, and subtracts them from the candidate
  * bid's quantity
  * @param p_game_state Pointer to the game state struct
  * @param p_candidate_bid Pointer to the bid struct
  * @return The number of unknown dice to satisfy the provided bid
  */
-unsigned int
+static unsigned int
 unknown_dice_to_satisy_bid (const perudo_game_state_s *p_game_state,
                             const perudo_bid_s *p_candidate_bid)
 {
@@ -80,7 +78,7 @@ unknown_dice_to_satisy_bid (const perudo_game_state_s *p_game_state,
  * @return double Probability that a single dice roll contributes to the
  * provided bid
  */
-double
+static double
 dice_roll_probability (const perudo_game_state_s *p_game_state,
                        const perudo_bid_s *p_candidate_bid)
 {
@@ -105,7 +103,7 @@ dice_roll_probability (const perudo_game_state_s *p_game_state,
  * `unique_desc_quant_sort()`. This function will sort an array of
  * `perudo_bid_s` by the `quantity` member in **descending** order.
  */
-int
+static int
 compare_bids_by_quantity (const void *a, const void *b)
 {
   perudo_bid_s arg_a = *(const perudo_bid_s *)a;
@@ -124,7 +122,7 @@ compare_bids_by_quantity (const void *a, const void *b)
  * @return size_t Number of unique sorted values
  *
  */
-size_t
+static size_t
 sort_hand_values_by_priority (const unsigned int *in_array, size_t len,
                               unsigned int *out_array)
 {
@@ -135,7 +133,7 @@ sort_hand_values_by_priority (const unsigned int *in_array, size_t len,
   // this algorithm
   perudo_bid_s *sorted_item_array = malloc (len * sizeof (perudo_bid_s));
 
-  // Iterate over input array, tracking values and their number of occurences
+  // Iterate over input array, tracking values and their number of occurrences
   for (size_t i = 0; i < len; i++)
     {
       bool item_found = false;
@@ -168,7 +166,7 @@ sort_hand_values_by_priority (const unsigned int *in_array, size_t len,
   return sorted_len;
 }
 
-void
+static void
 append_to_bid_candidates (const perudo_bid_s *p_bid,
                           perudo_bid_s *bid_candidates,
                           size_t *p_num_candidates)
@@ -177,7 +175,7 @@ append_to_bid_candidates (const perudo_bid_s *p_bid,
   (*p_num_candidates)++;
 }
 
-size_t
+static size_t
 select_best_bid (const perudo_game_state_s *p_game_state,
                  const perudo_bid_s *bid_candidates, size_t num_candidates)
 {
@@ -203,7 +201,6 @@ select_best_bid (const perudo_game_state_s *p_game_state,
 /***************************************************************
  * Public Function Definitions
  **************************************************************/
-
 bool
 is_game_valid (const perudo_game_state_s *p_game_state)
 {
@@ -272,7 +269,7 @@ is_next_bid_legal (const perudo_game_state_s *p_game_state,
   // Ensure the candidate bid is valid
   if (is_bid_valid (p_game_state, p_candidate_bid))
     {
-      // Using pointer to current bid makes the comparisions more visually
+      // Using pointer to current bid makes the comparisons more visually
       // consistent
       const perudo_bid_s *p_current_bid = &(p_game_state->current_bid);
 
@@ -317,20 +314,16 @@ is_next_bid_legal (const perudo_game_state_s *p_game_state,
                           >= p_current_bid->quantity);
             }
         }
+
       // Handle standard case
-      else
+      // 1. Quantity unchanged and value increased OR
+      // 2. Quantity increased, value irrelevant
+      else if (((p_candidate_bid->quantity == p_current_bid->quantity)
+                && (p_candidate_bid->value > p_current_bid->value))
+               || (p_candidate_bid->quantity > p_current_bid->quantity))
         {
-          if (p_candidate_bid->quantity > p_current_bid->quantity)
-            {
-              // Quantity increased, bid legal
-              is_legal = true;
-            }
-          else if ((p_candidate_bid->quantity == p_current_bid->quantity)
-                   && (p_candidate_bid->value > p_current_bid->value))
-            {
-              // Quantity unchanged but value increased, bid legal
-              is_legal = true;
-            }
+          // Quantity unchanged but value increased, bid legal
+          is_legal = true;
         }
     }
 
