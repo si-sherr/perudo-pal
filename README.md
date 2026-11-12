@@ -21,7 +21,11 @@ I made this tool mainly as a personal curiosity, and I am not suggesting that us
 Helper scripts used for development are contained within the `scripts/` directory. `build.sh` configures and builds the CMake project. `install.sh` copies the built executable to `~/.local/bin/` so it is in your path.
 
 ### Development
-The `build.sh` script also builds a [GoogleTest](https://github.com/google/googletest) unit test project. Run the tests with `test.sh`. This project uses the [Fake Function Framework](https://github.com/meekrosoft/fff) for fakes/mocks. `format.sh` applies formatting to C, Cpp and CMake files. It requires clang-format and cmakefmt to be installed.
+The `build.sh` script also builds a [GoogleTest](https://github.com/google/googletest) unit test project. Run the tests with `test.sh`. This project uses the [Fake Function Framework](https://github.com/meekrosoft/fff) for fakes/mocks. 
+
+`format.sh` applies formatting to C, Cpp and CMake files. It requires `clang-format` and `cmakefmt` to be installed.
+
+`check.sh` performs static analysis checks using `clang-tidy`.
 
 The C standard used for this project is C23.
 
