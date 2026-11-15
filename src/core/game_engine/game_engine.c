@@ -53,10 +53,10 @@ unknown_dice_to_satisy_bid (const perudo_game_state_s *p_game_state,
 
   for (size_t i = 0; i < p_game_state->hand_size; i++)
     {
-      // Count wildcard dice alongside bid value, only if not Palefico round
+      // Count wildcard dice alongside bid value, only if not Palifico round
       if ((p_game_state->hand_array[i] == p_candidate_bid->value)
           || ((p_game_state->hand_array[i] == WILDCARD_DICE_VALUE)
-              && !p_game_state->palefico_flag))
+              && !p_game_state->palifico_flag))
         {
           // If we have a dice of the bid value in our hand, reduce the total
           // number of required dice
@@ -87,9 +87,9 @@ dice_roll_probability (const perudo_game_state_s *p_game_state,
   double dice_probability = 1.0 / ((double)p_game_state->n_faces);
 
   // Wildcard counts for anything, so this effectively doubles the probability
-  // of getting any a given value (unless Palefico round is in play, where
+  // of getting any a given value (unless Palifico round is in play, where
   // wildcard is not applied, or we are already bidding the wildcard)
-  if (!(p_game_state->palefico_flag
+  if (!(p_game_state->palifico_flag
         || p_candidate_bid->value == WILDCARD_DICE_VALUE))
     {
       dice_probability *= 2.0;
@@ -273,10 +273,10 @@ is_next_bid_legal (const perudo_game_state_s *p_game_state,
       // consistent
       const perudo_bid_s *p_current_bid = &(p_game_state->current_bid);
 
-      // Handle Palefico case separately
-      if (p_game_state->palefico_flag)
+      // Handle Palifico case separately
+      if (p_game_state->palifico_flag)
         {
-          // In the Palefico round, value of the dice cannot change, so the
+          // In the Palifico round, value of the dice cannot change, so the
           // quantity can only increase
           is_legal
               = ((p_candidate_bid->value == p_current_bid->value)
@@ -417,10 +417,10 @@ find_next_best_bid (const perudo_game_state_s *p_game_state)
 
   if (is_game_valid (p_game_state))
     {
-      // Case: Palefico rules
-      if (p_game_state->palefico_flag)
+      // Case: Palifico rules
+      if (p_game_state->palifico_flag)
         {
-          // Under palefico rules we cannot change the value, so our best
+          // Under palifico rules we cannot change the value, so our best
           // option is trivial
           next_best_bid.value = p_game_state->current_bid.value;
           next_best_bid.quantity = p_game_state->current_bid.quantity + 1;

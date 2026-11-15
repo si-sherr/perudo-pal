@@ -25,12 +25,12 @@ const perudo_bid_s kDefaultNextBid = {
 const unsigned int kDefaultHandArray[TEST_DEFAULT_HAND_SIZE]
     = { 1, 2, 3, 4, 5, 6 };
 
-const bool kDefaultPaleficoFlag = false;
+const bool kDefaultPalificoFlag = false;
 
 const perudo_game_state_s kDefaultGameState
     = { TEST_DEFAULT_TOTAL_DICE, TEST_DEFAULT_FACES,
         TEST_DEFAULT_HAND_SIZE,  (unsigned int *)&kDefaultHandArray,
-        kDefaultCurrentBid,      kDefaultPaleficoFlag };
+        kDefaultCurrentBid,      kDefaultPalificoFlag };
 
 class GameEngineTestFixture : public ::testing::Test
 {
@@ -217,14 +217,14 @@ INSTANTIATE_TEST_SUITE_P (
         BidLegalTestParam{ { 3, WILDCARD_VALUE }, { 7, 5 }, true }));
 
 /***************************************************************
- * is_next_bid_legal() Palefico case tests
+ * is_next_bid_legal() Palifico case tests
  **************************************************************/
 
 TEST_F (GameEngineTestFixture,
-        IsNextBidLegalPaleficoIncreasedQuantitySameValueReturnsTrue)
+        IsNextBidLegalPalificoIncreasedQuantitySameValueReturnsTrue)
 {
   perudo_game_state_s game_state = kDefaultGameState;
-  game_state.palefico_flag = true;
+  game_state.palifico_flag = true;
 
   perudo_bid_s legal_bid = kDefaultCurrentBid;
   legal_bid.quantity += 1;
@@ -233,10 +233,10 @@ TEST_F (GameEngineTestFixture,
 }
 
 TEST_F (GameEngineTestFixture,
-        IsNextBidLegalPaleficoIncreasedQuantityIncreasedValueReturnsFalse)
+        IsNextBidLegalPalificoIncreasedQuantityIncreasedValueReturnsFalse)
 {
   perudo_game_state_s game_state = kDefaultGameState;
-  game_state.palefico_flag = true;
+  game_state.palifico_flag = true;
 
   perudo_bid_s increased_value_and_quantity_bid = kDefaultCurrentBid;
   increased_value_and_quantity_bid.quantity += 1;
@@ -247,10 +247,10 @@ TEST_F (GameEngineTestFixture,
 }
 
 TEST_F (GameEngineTestFixture,
-        IsNextBidLegalPaleficoSameQuantityIncreasedValueReturnsFalse)
+        IsNextBidLegalPalificoSameQuantityIncreasedValueReturnsFalse)
 {
   perudo_game_state_s game_state = kDefaultGameState;
-  game_state.palefico_flag = true;
+  game_state.palifico_flag = true;
 
   perudo_bid_s increased_value_same_quantity_bid = kDefaultCurrentBid;
   increased_value_same_quantity_bid.value += 1;
@@ -305,7 +305,7 @@ TEST_F (GameEngineTestFixture, ExpectedProbIfWinImpossible)
                                      .hand_size = 4,
                                      .hand_array = hand,
                                      .current_bid = { 4, 2 },
-                                     .palefico_flag = false };
+                                     .palifico_flag = false };
 
   perudo_bid_s impossible_bid
       = { 6, 2 }; // Bid is legal, but impossible given known dice
@@ -333,7 +333,7 @@ typedef struct
 {
   unsigned int total_dice;
   perudo_bid_s bid;
-  bool palefico_flag;
+  bool palifico_flag;
   double expected_binomial_p_arg;
   unsigned int expected_binomial_k_arg;
   unsigned int expected_binomial_n_arg;
@@ -355,7 +355,7 @@ protected:
     param = GetParam ();
 
     // There is a huge amount of parameter combinations we can test against. To
-    // keep the tests simple, the game state (except for palefico) and hand are
+    // keep the tests simple, the game state (except for palifico) and hand are
     // fixed, and only the bid is parametrised
     unsigned int testHand[6] = { 1, 1, 2, 2, 3, 4 };
 
@@ -363,7 +363,7 @@ protected:
                       .n_faces = 6,
                       .hand_size = sizeof (testHand) / sizeof (testHand[0]),
                       .hand_array = testHand,
-                      .palefico_flag = param.palefico_flag };
+                      .palifico_flag = param.palifico_flag };
 
     testBid = param.bid;
 
@@ -423,7 +423,7 @@ INSTANTIATE_TEST_SUITE_P (
     ::testing::Values (
         BidProbTestParam{ .total_dice = 30,
                           .bid = { 10, 2 },
-                          .palefico_flag = false,
+                          .palifico_flag = false,
                           .expected_binomial_p_arg = (1.0 / 3.0),
                           .expected_binomial_k_arg = 5,
                           .expected_binomial_n_arg = 24 },
@@ -488,7 +488,7 @@ INSTANTIATE_TEST_SUITE_P (
     ::testing::Values (
         BidProbTestParam{ .total_dice = 30,
                           .bid = { 10, 2 },
-                          .palefico_flag = false,
+                          .palifico_flag = false,
                           .expected_binomial_p_arg = (1.0 / 3.0),
                           .expected_binomial_k_arg = 6,
                           .expected_binomial_n_arg = 24 },

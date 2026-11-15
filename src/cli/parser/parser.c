@@ -28,7 +28,7 @@
 /***************************************************************
  * Defines
  **************************************************************/
-#define DEFAULT_PALEFICO_FLAG false
+#define DEFAULT_PALIFICO_FLAG false
 #define DEFAULT_N_FACES 6U
 
 #define MAX_TOTAL_DICE_ARG_LEN 8U
@@ -51,7 +51,7 @@ static const struct option OPTIONS_LONG[]
         { "total-dice", required_argument, nullptr, 't' },
         { "hand", required_argument, nullptr, 'd' },
         { "bid", required_argument, nullptr, 'b' },
-        { "palefico", no_argument, nullptr, 'p' },
+        { "palifico", no_argument, nullptr, 'p' },
         { "faces", required_argument, nullptr, 'f' },
         { nullptr, 0, nullptr, 0 } };
 
@@ -237,7 +237,7 @@ parser (int argc, char *argv[])
           break;
 
         case 'p':
-          result.game_state.palefico_flag = true;
+          result.game_state.palifico_flag = true;
           break;
 
         case 'f':

@@ -37,7 +37,7 @@ typedef struct
   size_t hand_size;
   unsigned int *hand_array;
   perudo_bid_s current_bid;
-  bool palefico_flag;
+  bool palifico_flag;
 
 } perudo_game_state_s;
 

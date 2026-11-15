@@ -18,12 +18,12 @@ const perudo_bid_s kDefaultCurrentBid
 const unsigned int kDefaultHandArray[TEST_DEFAULT_HAND_SIZE]
     = { 1, 2, 3, 4, 5, 6 };
 
-const bool kDefaultPaleficoFlag = false;
+const bool kDefaultPalificoFlag = false;
 
 const perudo_game_state_s kDefaultGameState
     = { TEST_DEFAULT_TOTAL_DICE, TEST_DEFAULT_FACES,
         TEST_DEFAULT_HAND_SIZE,  (unsigned int *)&kDefaultHandArray,
-        kDefaultCurrentBid,      kDefaultPaleficoFlag };
+        kDefaultCurrentBid,      kDefaultPalificoFlag };
 
 class HandlerTestFixture : public ::testing::Test
 {

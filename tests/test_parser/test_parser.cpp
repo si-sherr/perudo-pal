@@ -54,7 +54,7 @@ TEST (ParserTests, ParsesValidArgsSuccesfully)
   ASSERT_EQ (result.game_state.current_bid.quantity, 8);
   ASSERT_EQ (result.game_state.current_bid.value, 6);
   ASSERT_EQ (result.game_state.n_faces, 5);
-  ASSERT_TRUE (result.game_state.palefico_flag);
+  ASSERT_TRUE (result.game_state.palifico_flag);
 }
 
 /***************************************************************
@@ -212,16 +212,16 @@ TEST (ParserTests, NoFacesArgReturnsExpectedDefault)
 /***************************************************************
  * Tests for boolean flags
  **************************************************************/
-TEST (ParserTests, ParsesPaleficoFlag)
+TEST (ParserTests, ParsesPalificoFlag)
 {
-  std::string noPaleficoCmdStr = "-t 1 -b 3,4 -d 1";
-  std::string paleficoCmdStr = noPaleficoCmdStr + " -p";
+  std::string noPalificoCmdStr = "-t 1 -b 3,4 -d 1";
+  std::string palificoCmdStr = noPalificoCmdStr + " -p";
 
-  parse_result_s no_palefico_result = invoke_parser (noPaleficoCmdStr);
-  parse_result_s palefico_result = invoke_parser (paleficoCmdStr);
+  parse_result_s no_palifico_result = invoke_parser (noPalificoCmdStr);
+  parse_result_s palifico_result = invoke_parser (palificoCmdStr);
 
-  ASSERT_TRUE (palefico_result.game_state.palefico_flag);
-  ASSERT_FALSE (no_palefico_result.game_state.palefico_flag);
+  ASSERT_TRUE (palifico_result.game_state.palifico_flag);
+  ASSERT_FALSE (no_palifico_result.game_state.palifico_flag);
 }
 
 TEST (ParserTests, ParsesVersionFlag)

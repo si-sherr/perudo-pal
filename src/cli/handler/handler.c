@@ -30,7 +30,7 @@
   "of dice in "                                                               \
   "play (required)\n  [-b, --bid] <quant,val>      Current bid, e.g. 7,3 "    \
   "(required)\n  [-d, --hand] <val1,...valX>  Dice in hand, e.g. "            \
-  "1,1,3,6 (required)\n  [-p, --palefico]             Apply Palefico round "  \
+  "1,1,3,6 (required)\n  [-p, --palifico]             Apply Palifico round "  \
   "bidding "                                                                  \
   "rules\n  [-f, --faces] <val>          Number of faces on "                 \
   "the "                                                                      \
