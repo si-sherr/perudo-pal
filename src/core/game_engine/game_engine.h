@@ -37,7 +37,7 @@ typedef struct
   size_t hand_size;
   unsigned int *hand_array;
   perudo_bid_s current_bid;
-  bool palefico_flag;
+  bool palifico_flag;
 
 } perudo_game_state_s;
 
@@ -115,8 +115,13 @@ double probability_bid_incorrect (const perudo_game_state_s *p_game_state,
 double probability_bid_exact (const perudo_game_state_s *p_game_state,
                               const perudo_bid_s *p_candidate_bid);
 
-bool find_next_best_bid (const perudo_game_state_s *p_game_state,
-                         perudo_bid_s *p_bid_out, double *p_bid_prob);
+/**
+ * @brief Find the next best legal bid (with the highest probability of
+ * winning)
+ * @param p_game_state Pointer to the game state struct
+ * @return perudo_bid_s Next best bit
+ */
+perudo_bid_s find_next_best_bid (const perudo_game_state_s *p_game_state);
 
 #ifdef __cplusplus
 }

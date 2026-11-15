@@ -21,7 +21,7 @@
 double
 binomial_probability (double p, unsigned int k, unsigned int n)
 {
-  double prob = 0.0f;
+  double prob = 0.0;
 
   if (k <= n)
     {
@@ -44,7 +44,7 @@ cumulative_binomial_probability (double p, unsigned int k, unsigned int n)
     {
       // This for loop iterates over k values 0 -> k, so case is handled where
       // p = 0 and k = 0, which should give 1
-      for (int i = 0; i <= k; i++)
+      for (unsigned int i = 0; i <= k; i++)
         {
           prob += binomial_probability (p, i, n);
         }
@@ -56,20 +56,17 @@ cumulative_binomial_probability (double p, unsigned int k, unsigned int n)
 unsigned int
 choose (unsigned int n, unsigned int k)
 {
-  int retval = 0;
+  unsigned int retval = 0;
 
   if (k > n)
     {
       retval = 0;
     }
-  else if (k == 0)
+  else if ((k == 0) || (k == n))
     {
       retval = 1;
     }
-  else if (k == n)
-    {
-      retval = 1;
-    }
+
   // Recursion
   else
     {

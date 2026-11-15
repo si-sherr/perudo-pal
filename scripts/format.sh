@@ -11,13 +11,17 @@ SRC_DIRS=(
 # Ensure we are in root directory
 cd "$SCRIPT_DIR/.."
 
+echo Running clang-format...
 # Find all source files and format
-find $SRC_DIRS -iname '*.h' -o -iname '*.c' -o -iname '*.cpp' | xargs clang-format -i --verbose
+find ${SRC_DIRS[@]} -iname '*.h' -o -iname '*.c' -o -iname '*.cpp' | xargs clang-format -i --verbose
 
-# Optionally format cmake files if cmake-format is installed
-if command -v cmake-format >/dev/null 2>&1 
+# Optionally format cmake files if cmakefmt is installed
+if command -v cmakefmt >/dev/null 2>&1 
 then 
-    find . -not -path "./build/*" -iname 'CMakeLists.txt' | xargs cmake-format -i
+    echo Running cmakefmt...
+    cmakefmt --in-place .
 else
-    echo "Skipping cmake-format, executable not found"
+    echo "Skipping cmakefmt, executable not found"
 fi
+
+echo Formatting Done.
